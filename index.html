@@ -45,33 +45,12 @@
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
-            margin-bottom: 15px;
+            margin-bottom: 20px; /* Menambah margin bawah setelah logo dihapus */
             background-color: #fff;
             color: #333;
             transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
         
-        /* CSS untuk Tombol Upload Logo */
-        #logo-input {
-            display: none; /* Sembunyikan input file asli */
-        }
-        
-        .custom-file-upload {
-            border: 1px solid #ccc;
-            display: inline-block;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-            margin-bottom: 20px;
-            width: calc(100% - 26px); /* Samakan dengan text input */
-            transition: background-color 0.3s;
-        }
-
-        .custom-file-upload:hover {
-            background-color: #f1f1f1;
-        }
-
         #generate-btn {
             width: 100%;
             padding: 12px;
@@ -100,7 +79,7 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
             background-color: #fff;
             transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-            position: relative; /* Penting untuk memposisikan logo */
+            /* position: relative; sudah tidak perlu */
         }
 
         /* CSS untuk QR Code img yang di-generate library */
@@ -108,21 +87,6 @@
             width: 100% !important;
             height: 100% !important;
         }
-
-        /* === CSS untuk Logo di Tengah (RASIO 1:20) === */
-        #qrcode-container .logo {
-            width: 10px;  /* === DIUBAH === (1/20 dari 200px) */
-            height: 10px; /* === DIUBAH === (1/20 dari 200px) */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Trik centering */
-            border: 1px solid white; /* === DIUBAH === (Border sangat tipis) */
-            border-radius: 2px;
-            background-color: white; /* Pastikan background logo putih */
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        /* ==================================================== */
 
         /* Dark Mode Toggle Button */
         #mode-toggle {
@@ -162,16 +126,6 @@
         }
         body.dark-mode #text-input::placeholder { color: #b0b0b0; }
         
-        /* Dark Mode untuk File Upload */
-        body.dark-mode .custom-file-upload {
-            background-color: #4a4f5d;
-            border-color: #5e6471;
-            color: #e0e0e0;
-        }
-        body.dark-mode .custom-file-upload:hover {
-            background-color: #5e6471;
-        }
-        
         body.dark-mode #generate-btn { background-color: #0056b3; }
         body.dark-mode #generate-btn:hover { background-color: #003f8a; }
         body.dark-mode #qrcode-container {
@@ -192,11 +146,7 @@
         <p>Masukkan teks atau URL untuk diubah:</p>
         
         <input type="text" id="text-input" placeholder="Ketik di sini...">
-        
-        <label for="logo-input" class="custom-file-upload" id="logo-label">
-            Pilih Logo (Opsional)
-        </label>
-        <input type="file" id="logo-input" accept="image/*">
+
         <button id="generate-btn">Generate</button>
         
         <div id="qrcode-container">
@@ -213,9 +163,6 @@
             const modeToggle = document.getElementById('mode-toggle');
             const body = document.body;
             
-            const logoInput = document.getElementById('logo-input');
-            const logoLabel = document.getElementById('logo-label');
-
             let qrcode = null;
 
             // --- Dark Mode Logic ---
@@ -241,20 +188,10 @@
             }
             loadThemePreference();
             modeToggle.addEventListener('click', toggleDarkMode);
-            
-            // Tampilkan nama file di tombol upload
-            logoInput.addEventListener('change', () => {
-                if (logoInput.files && logoInput.files.length > 0) {
-                    logoLabel.textContent = logoInput.files[0].name;
-                } else {
-                    logoLabel.textContent = 'Pilih Logo (Opsional)';
-                }
-            });
 
             // --- QR Code Generator Logic ---
             function generateQRCode() {
                 const text = textInput.value.trim();
-                const logoFile = logoInput.files[0]; // Ambil file logo
 
                 if (text === "") {
                     alert("Harap masukkan teks terlebih dahulu!");
@@ -262,39 +199,20 @@
                     return;
                 }
 
-                // Hapus QR code & logo yang lama
+                // Hapus QR code yang lama
                 qrContainer.innerHTML = "";
 
                 try {
-                    // 1. Generate QR Code-nya dulu
+                    // Generate QR Code
                     qrcode = new QRCode(qrContainer, {
                         text: text,
                         width: 200,
                         height: 200,
                         colorDark: "#000000",
                         colorLight: "#ffffff",
-                        // Ini bagian PENTING untuk logo:
-                        correctLevel: QRCode.CorrectLevel.H 
+                        // Level koreksi standar (Medium)
+                        correctLevel: QRCode.CorrectLevel.M 
                     });
-
-                    // 2. Jika ada file logo, baca dan tambahkan
-                    if (logoFile) {
-                        const reader = new FileReader();
-
-                        // Saat file selesai dibaca
-                        reader.onload = (e) => {
-                            // Buat elemen img baru untuk logo
-                            const logoImg = document.createElement('img');
-                            logoImg.src = e.target.result; // Hasil baca file (data URL)
-                            logoImg.className = 'logo'; // Beri kelas CSS
-                            
-                            // Tambahkan logo ke dalam container
-                            qrContainer.appendChild(logoImg);
-                        };
-                        
-                        // Baca file gambar sebagai Data URL
-                        reader.readAsDataURL(logoFile);
-                    }
 
                 } catch (error) {
                     console.error("Gagal membuat QR Code:", error);
