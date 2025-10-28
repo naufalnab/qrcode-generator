@@ -51,7 +51,7 @@
             transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
         
-        /* === BARU: CSS untuk Tombol Upload Logo === */
+        /* CSS untuk Tombol Upload Logo */
         #logo-input {
             display: none; /* Sembunyikan input file asli */
         }
@@ -71,7 +71,6 @@
         .custom-file-upload:hover {
             background-color: #f1f1f1;
         }
-        /* ========================================= */
 
         #generate-btn {
             width: 100%;
@@ -90,7 +89,7 @@
             background-color: #0056b3;
         }
 
-        /* === DIPERBARUI: CSS untuk QR Container === */
+        /* CSS untuk QR Container */
         #qrcode-container {
             width: 200px;
             height: 200px;
@@ -103,7 +102,6 @@
             transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
             position: relative; /* Penting untuk memposisikan logo */
         }
-        /* ========================================= */
 
         /* CSS untuk QR Code img yang di-generate library */
         #qrcode-container img {
@@ -111,20 +109,20 @@
             height: 100% !important;
         }
 
-        /* === BARU: CSS untuk Logo di Tengah === */
+        /* === CSS untuk Logo di Tengah (VERSI LEBIH KECIL) === */
         #qrcode-container .logo {
-            width: 50px;  /* Ukuran logo (25% dari QR code) */
-            height: 50px;
+            width: 40px;  /* === DIUBAH === (Sekarang lebih kecil) */
+            height: 40px; /* === DIUBAH === (Sekarang lebih kecil) */
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%); /* Trik centering */
-            border: 4px solid white; /* Border agar terpisah dari QR */
-            border-radius: 8px;
+            border: 3px solid white; /* === DIUBAH === (Border lebih tipis) */
+            border-radius: 6px;
             background-color: white; /* Pastikan background logo putih */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-        /* ========================================= */
+        /* ==================================================== */
 
         /* Dark Mode Toggle Button */
         #mode-toggle {
@@ -164,7 +162,7 @@
         }
         body.dark-mode #text-input::placeholder { color: #b0b0b0; }
         
-        /* === BARU: Dark Mode untuk File Upload === */
+        /* Dark Mode untuk File Upload */
         body.dark-mode .custom-file-upload {
             background-color: #4a4f5d;
             border-color: #5e6471;
@@ -173,7 +171,6 @@
         body.dark-mode .custom-file-upload:hover {
             background-color: #5e6471;
         }
-        /* ========================================= */
         
         body.dark-mode #generate-btn { background-color: #0056b3; }
         body.dark-mode #generate-btn:hover { background-color: #003f8a; }
@@ -216,10 +213,8 @@
             const modeToggle = document.getElementById('mode-toggle');
             const body = document.body;
             
-            // === BARU: Elemen untuk Logo ===
             const logoInput = document.getElementById('logo-input');
             const logoLabel = document.getElementById('logo-label');
-            // ================================
 
             let qrcode = null;
 
@@ -247,7 +242,7 @@
             loadThemePreference();
             modeToggle.addEventListener('click', toggleDarkMode);
             
-            // === BARU: Tampilkan nama file di tombol upload ===
+            // Tampilkan nama file di tombol upload
             logoInput.addEventListener('change', () => {
                 if (logoInput.files && logoInput.files.length > 0) {
                     logoLabel.textContent = logoInput.files[0].name;
@@ -255,9 +250,8 @@
                     logoLabel.textContent = 'Pilih Logo (Opsional)';
                 }
             });
-            // =============================================
 
-            // --- QR Code Generator Logic (DIPERBARUI) ---
+            // --- QR Code Generator Logic ---
             function generateQRCode() {
                 const text = textInput.value.trim();
                 const logoFile = logoInput.files[0]; // Ambil file logo
