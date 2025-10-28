@@ -4,9 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator</title>
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Light Mode Styles (Default) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333; /* Default text color */
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 320px;
+            transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition */
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        #text-input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            background-color: #fff;
+            color: #333;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        #generate-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #generate-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #qrcode-container {
+            width: 200px;
+            height: 200px;
+            margin: 25px auto 0;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 10px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            background-color: #fff; /* QR background for light mode */
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Penting: Style untuk gambar QR Code yang di-generate oleh library */
+        #qrcode-container img {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Dark Mode Toggle Button */
+        #mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #mode-toggle:hover {
+            background-color: #5a6268;
+        }
+
+        /* Dark Mode Styles (Applied when body has .dark-mode class) */
+        body.dark-mode {
+            background-color: #282c36; /* Darker background */
+            color: #e0e0e0; /* Lighter text */
+        }
+
+        body.dark-mode .container {
+            background-color: #3a3f4b; /* Darker container */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode h1 {
+            color: #f8f8f8;
+        }
+
+        body.dark-mode p {
+            color: #b0b0b0;
+        }
+
+        body.dark-mode #text-input {
+            background-color: #4a4f5d;
+            border-color: #5e6471;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode #text-input::placeholder {
+            color: #b0b0b0;
+        }
+
+        body.dark-mode #generate-btn {
+            background-color: #0056b3; /* Slightly darker primary button */
+        }
+
+        body.dark-mode #generate-btn:hover {
+            background-color: #003f8a;
+        }
+
+        body.dark-mode #qrcode-container {
+            background-color: #4a4f5d; /* Darker background for QR container */
+            border-color: #5e6471;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        body.dark-mode #mode-toggle {
+            background-color: #5e6471;
+            color: #f0f0f0;
+        }
+        body.dark-mode #mode-toggle:hover {
+            background-color: #4a4f5d;
+        }
+    </style>
 </head>
 <body>
+
+    <button id="mode-toggle">Mode Gelap</button>
 
     <div class="container">
         <h1>QR Code Generator</h1>
@@ -21,6 +175,85 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textInput = document.getElementById('text-input');
+            const generateBtn = document.getElementById('generate-btn');
+            const qrContainer = document.getElementById('qrcode-container');
+            const modeToggle = document.getElementById('mode-toggle');
+            const body = document.body;
+
+            let qrcode = null;
+
+            // --- Dark Mode Logic ---
+            // Fungsi untuk mengaktifkan/menonaktifkan dark mode
+            function toggleDarkMode() {
+                body.classList.toggle('dark-mode');
+                // Simpan preferensi pengguna di localStorage
+                if (body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                    modeToggle.textContent = 'Mode Terang';
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    modeToggle.textContent = 'Mode Gelap';
+                }
+            }
+
+            // Periksa preferensi tema saat halaman dimuat
+            function loadThemePreference() {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    body.classList.add('dark-mode');
+                    modeToggle.textContent = 'Mode Terang';
+                } else {
+                    body.classList.remove('dark-mode');
+                    modeToggle.textContent = 'Mode Gelap';
+                }
+            }
+
+            // Panggil saat DOM selesai dimuat
+            loadThemePreference();
+
+            // Tambahkan event listener untuk tombol toggle
+            modeToggle.addEventListener('click', toggleDarkMode);
+
+            // --- QR Code Generator Logic ---
+            function generateQRCode() {
+                const text = textInput.value.trim();
+
+                if (text === "") {
+                    alert("Harap masukkan teks terlebih dahulu!");
+                    textInput.focus();
+                    return;
+                }
+
+                // Hapus QR code yang lama
+                qrContainer.innerHTML = "";
+
+                try {
+                    qrcode = new QRCode(qrContainer, {
+                        text: text,
+                        width: 200,
+                        height: 200,
+                        // Warna QR Code tidak berubah berdasarkan mode karena ini adalah representasi data
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                } catch (error) {
+                    console.error("Gagal membuat QR Code:", error);
+                    alert("Terjadi kesalahan saat membuat QR Code.");
+                }
+            }
+
+            generateBtn.addEventListener('click', generateQRCode);
+
+            textInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    generateQRCode();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
