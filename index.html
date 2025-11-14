@@ -304,64 +304,65 @@
 
                 const highResSize = 1000; // Resolusi tinggi
 
-                // Buat div sementara yang tersembunyi
+                // Buat canvas untuk QR code kualitas tinggi
+                const canvas = document.createElement('canvas');
+                canvas.width = highResSize;
+                canvas.height = highResSize;
+                const ctx = canvas.getContext('2d');
+
+                // Buat QR code sementara untuk mendapatkan data
                 const tempDiv = document.createElement('div');
                 tempDiv.style.position = 'absolute';
-                tempDiv.style.left = '-9999px'; // Pindahkan ke luar layar
+                tempDiv.style.left = '-9999px';
                 document.body.appendChild(tempDiv);
 
                 try {
-                    // Generate QR code di div sementara
                     new QRCode(tempDiv, {
                         text: text,
                         width: highResSize,
                         height: highResSize,
                         colorDark: "#000000",
                         colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.M 
+                        correctLevel: QRCode.CorrectLevel.H // Level koreksi error tertinggi
                     });
 
-                    // Ambil data gambar dari <img>
-                    // Kita butuh delay sedikit agar gambar selesai di-render
                     setTimeout(() => {
                         const img = tempDiv.querySelector('img');
-                        if (img) {
-                            const imgSrc = img.src; // Ini adalah data Base64
-
-                            // Buat link download
-                            const downloadLink = document.createElement('a');
-                            downloadLink.href = imgSrc;
-                            downloadLink.download = 'qrcode_high_quality.png';
+                        const tempCanvas = tempDiv.querySelector('canvas');
+                        
+                        if (tempCanvas) {
+                            // Gunakan canvas yang sudah ada
+                            const dataURL = tempCanvas.toDataURL('image/png', 1.0);
                             
-                            // Klik link tersebut secara otomatis
-                            document.body.appendChild(downloadLink);
-                            downloadLink.click();
-                            document.body.removeChild(downloadLink);
+                            // Buat link download
+                            const link = document.createElement('a');
+                            link.download = 'qrcode_high_quality.png';
+                            link.href = dataURL;
+                            link.click();
+                            
+                        } else if (img && img.complete) {
+                            // Jika hanya ada img, gambar ke canvas baru
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, highResSize, highResSize);
+                            ctx.drawImage(img, 0, 0, highResSize, highResSize);
+                            
+                            const dataURL = canvas.toDataURL('image/png', 1.0);
+                            const link = document.createElement('a');
+                            link.download = 'qrcode_high_quality.png';
+                            link.href = dataURL;
+                            link.click();
                         } else {
-                             // Fallback jika <img> tidak ditemukan, ambil dari <canvas>
-                            const canvas = tempDiv.querySelector('canvas');
-                            if (canvas) {
-                                const imgSrc = canvas.toDataURL('image/png');
-                                const downloadLink = document.createElement('a');
-                                downloadLink.href = imgSrc;
-                                downloadLink.download = 'qrcode_high_quality.png';
-                                document.body.appendChild(downloadLink);
-                                downloadLink.click();
-                                document.body.removeChild(downloadLink);
-                            } else {
-                                alert("Gagal mengambil data gambar QR code.");
-                            }
+                            alert("Gagal mengambil data gambar QR code.");
                         }
                         
                         // Hapus div sementara
                         document.body.removeChild(tempDiv);
                         
-                    }, 50); // Delay 50ms
+                    }, 100);
 
                 } catch (error) {
                     console.error("Gagal membuat QR high-res:", error);
                     alert("Gagal membuat file download.");
-                    // Hapus div sementara jika error
                     if (document.body.contains(tempDiv)) {
                         document.body.removeChild(tempDiv);
                     }
