@@ -6,141 +6,167 @@
     <title>QR Code Generator</title>
 
     <style>
-    /* Light Mode Styles (Default) */
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background-color: #f0f2f5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-        color: #333;
-        transition: background-color 0.3s, color 0.3s;
-    }
+        /* Light Mode Styles (Default) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-    .container {
-        background-color: #ffffff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        /* --- PERUBAHAN DI SINI --- */
-        max-width: 360px; /* Lebar maksimum */
-        width: 90%;     /* Responsif di layar kecil */
-        box-sizing: border-box; /* Padding tidak menambah lebar */
-        /* --- AKHIR PERUBAHAN --- */
-        transition: background-color 0.3s, box-shadow 0.3s;
-    }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            /* Saya kembalikan ke kode asli Anda agar fokus ke input ukuran */
+            width: 320px; 
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
 
-    h1 {
-        margin-top: 0;
-        color: #333;
-    }
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
 
-    p {
-        color: #666;
-        margin-bottom: 20px;
-    }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
 
-    #text-input {
-        width: calc(100% - 22px);
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        font-size: 16px;
-        margin-bottom: 20px;
-        background-color: #fff;
-        color: #333;
-        transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-    }
-    
-    #generate-btn {
-        width: 100%;
-        padding: 12px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+        #text-input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 20px; /* Menambah margin bawah setelah logo dihapus */
+            background-color: #fff;
+            color: #333;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        
+        /* CSS untuk Label Ukuran */
+        .size-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+            text-align: left;
+        }
 
-    #generate-btn:hover {
-        background-color: #0056b3;
-    }
+        /* CSS untuk Dropdown Ukuran */
+        #size-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 20px; /* Jarak ke tombol generate */
+            background-color: #fff;
+            color: #333;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            box-sizing: border-box; /* Agar padding tidak merusak lebar 100% */
+        }
+        
+        #generate-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    /* CSS untuk QR Container */
-    #qrcode-container {
-        /* --- PERUBAHAN DI SINI --- */
-        width: 80%; /* Lebar 80% dari .container */
-        aspect-ratio: 1 / 1; /* Menjaga bentuk tetap persegi */
-        height: auto; /* Hapus tinggi yang tetap */
-        /* --- AKHIR PERUBAHAN --- */
-        margin: 25px auto 0;
-        border: 1px solid #eee;
-        border-radius: 6px;
-        padding: 10px;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        background-color: #fff;
-        transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
-    }
+        #generate-btn:hover {
+            background-color: #0056b3;
+        }
 
-    /* CSS untuk QR Code img yang di-generate library (INI PENTING, JANGAN DIUBAH) */
-    #qrcode-container img {
-        width: 100% !important;
-        height: 100% !important;
-    }
+        /* CSS untuk QR Container */
+        #qrcode-container {
+            width: 200px; /* Ukuran default (sesuai dropdown) */
+            height: 200px; /* Ukuran default (sesuai dropdown) */
+            margin: 25px auto 0;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 10px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            background-color: #fff;
+            /* Transisi agar perubahan ukuran mulus */
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s, width 0.3s, height 0.3s;
+        }
 
-    /* Dark Mode Toggle Button */
-    #mode-toggle {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background-color: #6c757d;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: background-color 0.3s, color 0.3s;
-    }
+        /* CSS untuk QR Code img yang di-generate library */
+        #qrcode-container img {
+            width: 100% !important;
+            height: 100% !important;
+        }
 
-    #mode-toggle:hover {
-        background-color: #5a6268;
-    }
+        /* Dark Mode Toggle Button */
+        #mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-    /* === Dark Mode Styles === */
-    body.dark-mode {
-        background-color: #282c36;
-        color: #e0e0e0;
-    }
-    body.dark-mode .container {
-        background-color: #3a3f4b;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    }
-    body.dark-mode h1 { color: #f8f8f8; }
-    body.dark-mode p { color: #b0b0b0; }
-    body.dark-mode #text-input {
-        background-color: #4a4f5d;
-        border-color: #5e6471;
-        color: #f0f0f0;
-    }
-    body.dark-mode #text-input::placeholder { color: #b0b0b0; }
-    
-    body.dark-mode #generate-btn { background-color: #0056b3; }
-    body.dark-mode #generate-btn:hover { background-color: #003f8a; }
-    body.dark-mode #qrcode-container {
-        background-color: #4a4f5d;
-        border-color: #5e6471;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
-    }
-    body.dark-mode #mode-toggle { background-color: #5e6471; color: #f0f0f0; }
-    body.dark-mode #mode-toggle:hover { background-color: #4a4f5d; }
+        #mode-toggle:hover {
+            background-color: #5a6268;
+        }
+
+        /* === Dark Mode Styles === */
+        body.dark-mode {
+            background-color: #282c36;
+            color: #e0e0e0;
+        }
+        body.dark-mode .container {
+            background-color: #3a3f4b;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        body.dark-mode h1 { color: #f8f8f8; }
+        body.dark-mode p { color: #b0b0b0; }
+        body.dark-mode #text-input {
+            background-color: #4a4f5d;
+            border-color: #5e6471;
+            color: #f0f0f0;
+        }
+        body.dark-mode #text-input::placeholder { color: #b0b0b0; }
+        
+        /* Style Dark Mode untuk Elemen Baru */
+        body.dark-mode .size-label { color: #b0b0b0; }
+        body.dark-mode #size-select {
+            background-color: #4a4f5d;
+            border-color: #5e6471;
+            color: #f0f0f0;
+        }
+        
+        body.dark-mode #generate-btn { background-color: #0056b3; }
+        body.dark-mode #generate-btn:hover { background-color: #003f8a; }
+        body.dark-mode #qrcode-container {
+            background-color: #4a4f5d;
+            border-color: #5e6471;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+        }
+        body.dark-mode #mode-toggle { background-color: #5e6471; color: #f0f0f0; }
+        body.dark-mode #mode-toggle:hover { background-color: #4a4f5d; }
     </style>
 </head>
 <body>
@@ -153,6 +179,13 @@
         
         <input type="text" id="text-input" placeholder="Ketik di sini...">
 
+        <label for="size-select" class="size-label">Pilih Ukuran:</label>
+        <select id="size-select">
+            <option value="150">150x150 px</option>
+            <option value="200" selected>200x200 px</option>
+            <option value="250">250x250 px</option>
+            <option value="300">300x300 px</option>
+        </select>
         <button id="generate-btn">Generate</button>
         
         <div id="qrcode-container">
@@ -168,6 +201,9 @@
             const qrContainer = document.getElementById('qrcode-container');
             const modeToggle = document.getElementById('mode-toggle');
             const body = document.body;
+            
+            // 1. Ambil elemen select baru
+            const sizeSelect = document.getElementById('size-select');
             
             let qrcode = null;
 
@@ -199,6 +235,9 @@
             function generateQRCode() {
                 const text = textInput.value.trim();
 
+                // 2. Baca nilai ukuran yang dipilih
+                const size = parseInt(sizeSelect.value, 10); 
+
                 if (text === "") {
                     alert("Harap masukkan teks terlebih dahulu!");
                     textInput.focus();
@@ -208,16 +247,21 @@
                 // Hapus QR code yang lama
                 qrContainer.innerHTML = "";
 
+                // 3. Atur ukuran container secara dinamis
+                qrContainer.style.width = size + 'px';
+                qrContainer.style.height = size + 'px';
+
                 try {
                     // Generate QR Code
                     qrcode = new QRCode(qrContainer, {
                         text: text,
-                        width: 200,
-                        height: 200,
+                        // 4. Gunakan variabel size di sini
+                        width: size,
+                        height: size,
                         colorDark: "#000000",
                         colorLight: "#ffffff",
                         // Level koreksi standar (Medium)
-                        correctLevel: QRCode.CorrectLevel.M 
+                        correctLevel: QRCode.CorrectLevel.M  
                     });
 
                 } catch (error) {
